@@ -11,6 +11,8 @@ os.environ["ANTHROPIC_API_KEY"] = "dummy_test_key"
 os.environ["ALLOWED_ORIGINS"] = '["http://localhost:3000"]'
 os.environ["JWT_PUBLIC_KEY"] = "test_public_key"
 os.environ["JWT_PRIVATE_KEY"] = "test_private_key"
+os.environ["DATABASE_URL"] = "postgresql+asyncpg://postgres:postgres@localhost:5432/ecotrack"
+os.environ["REDIS_URL"] = "redis://localhost:6379/0"
 
 from app.main import app
 from app.models import Base

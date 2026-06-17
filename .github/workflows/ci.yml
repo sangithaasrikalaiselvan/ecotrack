@@ -32,6 +32,8 @@ jobs:
     env:
       JWT_PUBLIC_KEY: 'test_public_key'
       JWT_PRIVATE_KEY: 'test_private_key'
+      DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@localhost:5432/ecotrack'
+      REDIS_URL: 'redis://localhost:6379/0'
     defaults:
       run:
         working-directory: apps/api
