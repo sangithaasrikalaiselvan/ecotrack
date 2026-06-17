@@ -61,6 +61,7 @@ export default function CoachPage() {
       const data = await res.json()
       setMessages((prev) => [...prev, { role: 'assistant', content: data.response }])
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err)
       setMessages((prev) => [
         ...prev, 

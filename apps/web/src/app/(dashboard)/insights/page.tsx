@@ -52,6 +52,7 @@ export default function InsightsPage() {
         const data = await res.json()
         setBaseResult(data)
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error(err)
       } finally {
         setLoading(false)
@@ -79,6 +80,7 @@ export default function InsightsPage() {
       const data = await res.json()
       setSimulateResult(data)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err)
     } finally {
       setIsSimulating(false)

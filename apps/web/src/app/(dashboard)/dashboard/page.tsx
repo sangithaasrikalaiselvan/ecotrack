@@ -34,6 +34,7 @@ export default function DashboardPage() {
         const data = await res.json()
         setRecord(data)
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error(err)
       } finally {
         setLoading(false)

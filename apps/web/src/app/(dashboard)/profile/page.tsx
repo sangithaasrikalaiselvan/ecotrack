@@ -31,6 +31,7 @@ export default function ProfilePage() {
         const data = await res.json()
         setStats({ total_kg: data.total_kg, green_score: data.green_score })
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error(err)
       } finally {
         setLoading(false)

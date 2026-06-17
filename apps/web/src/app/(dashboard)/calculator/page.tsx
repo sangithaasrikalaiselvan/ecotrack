@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useCarbonStore } from "@/stores/carbon-store"
 import { calculateFootprint, saveRecord } from "@/lib/api/carbon"
-import { usePathname } from "next/navigation" // just keeping next/navigation for format if needed, but actually I'll just remove the whole line. Wait, let me just remove useRouter.
+
 import Link from "next/link"
 
 import { StepIndicator } from "@/components/shared/StepIndicator"
@@ -125,6 +125,7 @@ export default function CalculatorPage() {
       // Auto-save in background
       await saveRecord(result)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Calculation failed", error)
     } finally {
       setCalculating(false)
