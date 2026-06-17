@@ -1,0 +1,6 @@
+[tool.ruff]
+select = ["E", "F", "I"]
+line-length = 88
+
+[tool.mypy]
+strict = true

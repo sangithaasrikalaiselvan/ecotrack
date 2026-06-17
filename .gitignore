@@ -1,0 +1,13 @@
+.env
+.env.local
+.env.production
+**/.env
+**/.env.local
+**/.env.production
+apps/web/.next/
+apps/api/__pycache__/
+apps/api/.pytest_cache/
+node_modules/
+*.pyc
+venv/
+apps/api/venv/
