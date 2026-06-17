@@ -9,6 +9,8 @@ import os
 
 os.environ["ANTHROPIC_API_KEY"] = "dummy_test_key"
 os.environ["ALLOWED_ORIGINS"] = '["http://localhost:3000"]'
+os.environ["JWT_PUBLIC_KEY"] = "test_public_key"
+os.environ["JWT_PRIVATE_KEY"] = "test_private_key"
 
 from app.main import app
 from app.models import Base

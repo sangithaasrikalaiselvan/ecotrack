@@ -29,6 +29,9 @@ jobs:
   backend-tests:
     name: Backend Tests
     runs-on: ubuntu-latest
+    env:
+      JWT_PUBLIC_KEY: 'test_public_key'
+      JWT_PRIVATE_KEY: 'test_private_key'
     defaults:
       run:
         working-directory: apps/api
