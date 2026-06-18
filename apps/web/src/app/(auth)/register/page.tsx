@@ -58,11 +58,12 @@ export default function RegisterPage() {
           <label className="text-sm font-medium leading-none" htmlFor="name">Name</label>
           <input 
             id="name" 
+            aria-describedby="name-error"
             placeholder="John Doe" 
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             {...register('name')} 
           />
-          {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+          {errors.name && <div id="name-error" role="alert" aria-live="polite" className="text-sm text-red-500">{errors.name.message}</div>}
         </div>
         
         <div className="space-y-2">
@@ -70,11 +71,12 @@ export default function RegisterPage() {
           <input 
             id="email" 
             type="email" 
+            aria-describedby="email-error"
             placeholder="m@example.com" 
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             {...register('email')} 
           />
-          {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+          {errors.email && <div id="email-error" role="alert" aria-live="polite" className="text-sm text-red-500">{errors.email.message}</div>}
         </div>
 
         <div className="space-y-2">
@@ -82,10 +84,11 @@ export default function RegisterPage() {
           <input 
             id="password" 
             type="password" 
+            aria-describedby="password-error"
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             {...register('password')} 
           />
-          {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+          {errors.password && <div id="password-error" role="alert" aria-live="polite" className="text-sm text-red-500">{errors.password.message}</div>}
         </div>
 
         <div className="space-y-2">
@@ -93,15 +96,17 @@ export default function RegisterPage() {
           <input 
             id="confirmPassword" 
             type="password" 
+            aria-describedby="confirmPassword-error"
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             {...register('confirmPassword')} 
           />
-          {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && <div id="confirmPassword-error" role="alert" aria-live="polite" className="text-sm text-red-500">{errors.confirmPassword.message}</div>}
         </div>
 
         <button 
           type="submit" 
           disabled={isSubmitting}
+          aria-busy={isSubmitting}
           className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 h-10 px-4 py-2 mt-4"
         >
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

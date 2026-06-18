@@ -15,6 +15,10 @@ export function VehicleCard({ label, icon, selected, onSelect }: VehicleCardProp
   return (
     <Card 
       onClick={onSelect}
+      role="button"
+      aria-pressed={selected}
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onSelect()}
       className={`relative cursor-pointer transition-all duration-200 overflow-hidden group
         ${selected 
           ? 'border-eco-primary ring-1 ring-eco-primary bg-eco-surface dark:bg-green-900/20' 

@@ -10,13 +10,13 @@ interface StepIndicatorProps {
 export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2" role="list">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep
           const isCurrent = index === currentStep
 
           return (
-            <div key={step} className="flex flex-col items-center relative z-10">
+            <div key={step} role="listitem" aria-current={isCurrent ? "step" : undefined} aria-label={`Step ${index + 1} of ${steps.length}: ${step}`} className="flex flex-col items-center relative z-10">
               <div 
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-300
                   ${isCompleted ? 'bg-eco-primary text-white' : 

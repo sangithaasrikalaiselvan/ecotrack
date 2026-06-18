@@ -179,6 +179,10 @@ export default function CalculatorPage() {
                     control={control}
                     render={({ field }) => (
                       <Slider
+                        aria-label="Kilometers per day"
+                        aria-valuemin={0}
+                        aria-valuemax={200}
+                        aria-valuenow={field.value}
                         min={0} max={200} step={1}
                         value={[field.value]}
                         onValueChange={(vals) => field.onChange(Array.isArray(vals) ? vals[0] : vals)}
@@ -217,8 +221,8 @@ export default function CalculatorPage() {
 
               <div className="space-y-8">
                 <div className="space-y-2">
-                  <Label className="text-base">Monthly Electricity (kWh)</Label>
-                  <Input type="number" {...register("monthly_kwh", { valueAsNumber: true })} className="text-2xl h-14" />
+                  <Label htmlFor="monthly_kwh" className="text-base">Monthly Electricity (kWh)</Label>
+                  <Input id="monthly_kwh" type="number" {...register("monthly_kwh", { valueAsNumber: true })} className="text-2xl h-14" />
                   <p className="text-sm text-muted-foreground">Check your electricity bill for this number</p>
                   {errors.monthly_kwh && <p className="text-red-500 text-sm">{errors.monthly_kwh.message}</p>}
                 </div>
@@ -229,8 +233,8 @@ export default function CalculatorPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-base">Country</Label>
-                  <select {...register("country_code")} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                  <Label htmlFor="country_code" className="text-base">Country</Label>
+                  <select id="country_code" {...register("country_code")} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                     <option value="IN">India</option>
                     <option value="US">United States</option>
                     <option value="GB">United Kingdom</option>
@@ -306,11 +310,11 @@ export default function CalculatorPage() {
               ) : <div></div>}
 
               {currentStep < 2 ? (
-                <Button type="button" className="bg-eco-primary hover:bg-eco-secondary" onClick={nextStep}>
+                <Button type="button" className="bg-eco-primary hover:bg-eco-secondary" onClick={nextStep} aria-label={currentStep === 0 ? "Continue to electricity step" : "Continue to food and waste step"}>
                   Next <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
-                <Button type="submit" className="bg-eco-primary hover:bg-eco-secondary text-white font-semibold">
+                <Button type="submit" className="bg-eco-primary hover:bg-eco-secondary text-white font-semibold" aria-label="Calculate my carbon footprint">
                   Calculate Results
                 </Button>
               )}

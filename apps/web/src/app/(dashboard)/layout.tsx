@@ -43,6 +43,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-3 focus:bg-white focus:text-green-700 focus:rounded focus:ring-2 focus:ring-green-500"
+      >
+        Skip to main content
+      </a>
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-card/50 backdrop-blur-sm sticky top-0 h-screen">
         <div className="p-6 flex items-center space-x-2">
@@ -86,12 +92,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
              <Leaf className="w-5 h-5 text-green-600" />
              <span className="text-lg font-bold text-green-600">EcoTrack AI</span>
           </div>
-          <button onClick={handleLogout} className="text-muted-foreground p-2">
+          <button onClick={handleLogout} aria-label="Log out of EcoTrack AI" className="text-muted-foreground p-2">
             <LogOut className="w-5 h-5" />
           </button>
         </header>
 
-        <main className="flex-1 p-4 sm:p-8 max-w-6xl mx-auto w-full">
+        <main id="main-content" className="flex-1 p-4 sm:p-8 max-w-6xl mx-auto w-full">
           {children}
         </main>
       </div>

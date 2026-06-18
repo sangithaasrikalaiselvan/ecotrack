@@ -131,48 +131,69 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-sm">
           <h3 className="text-lg font-semibold mb-6">Emission Breakdown</h3>
           <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                        return (
-                          <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                            <tspan x={viewBox.cx} y={(viewBox.cy || 0) - 5} className="fill-foreground text-xl font-bold">
-                              {record.total_kg}
-                            </tspan>
-                            <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 15} className="fill-muted-foreground text-xs">
-                              kg CO₂
-                            </tspan>
-                          </text>
-                        )
-                      }
-                      return null
-                    }}
+            <div role="img" aria-label="Carbon footprint breakdown: showing transport, electricity, food and waste emissions" style={{ width: '100%', height: '100%' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                    <Label
+                      content={({ viewBox }) => {
+                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                          return (
+                            <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                              <tspan x={viewBox.cx} y={(viewBox.cy || 0) - 5} className="fill-foreground text-xl font-bold">
+                                {record.total_kg}
+                              </tspan>
+                              <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 15} className="fill-muted-foreground text-xs">
+                                kg CO₂
+                              </tspan>
+                            </text>
+                          )
+                        }
+                        return null
+                      }}
+                    />
+                  </Pie>
+                  <Tooltip
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    formatter={(value: any, name: any, props: any) => [
+                      `${Number(value).toFixed(1)}% (${props.payload.rawKg.toFixed(1)} kg)`,
+                      name
+                    ]}
                   />
-                </Pie>
-                <Tooltip
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  formatter={(value: any, name: any, props: any) => [
-                    `${Number(value).toFixed(1)}% (${props.payload.rawKg.toFixed(1)} kg)`,
-                    name
-                  ]}
-                />
-                <Legend verticalAlign="bottom" height={36} />
-              </PieChart>
-            </ResponsiveContainer>
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <table className="sr-only">
+              <caption>Carbon footprint breakdown data</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">kg CO₂</th>
+                  <th scope="col">Percentage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {chartData.map((d) => (
+                  <tr key={d.name}>
+                    <td>{d.name}</td>
+                    <td>{d.rawKg} kg</td>
+                    <td>{d.value}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
