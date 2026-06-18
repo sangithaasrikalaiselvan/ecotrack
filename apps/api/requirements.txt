@@ -12,3 +12,4 @@ pytest
 httpx
 pytest-asyncio
 aiosqlite
+anthropic
