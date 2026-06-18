@@ -1,13 +1,11 @@
 # app/core/security.py
 from datetime import datetime, timedelta, timezone
-from passlib.context import CryptContext
+import bcrypt
 from jose import jwt, JWTError
 import uuid
 from typing import Dict, Any
 from fastapi import HTTPException, status
 from app.core.config import settings
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 
 ALGORITHM = "RS256"
 
@@ -16,11 +14,13 @@ public_key = settings.JWT_PUBLIC_KEY.replace("\\n", "\n").strip()
 
 def hash_password(plain: str) -> str:
     """Hash a password using bcrypt."""
-    return pwd_context.hash(plain)
+    salt = bcrypt.gensalt(rounds=12)
+    hashed_bytes = bcrypt.hashpw(plain.encode('utf-8'), salt)
+    return hashed_bytes.decode('utf-8')
 
 def verify_password(plain: str, hashed: str) -> bool:
     """Verify a plain password against a hashed password."""
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode('utf-8'), hashed.encode('utf-8'))
 
 def create_access_token(user_id: uuid.UUID) -> str:
     """Create a short-lived access token."""

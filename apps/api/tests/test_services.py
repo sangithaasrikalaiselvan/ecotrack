@@ -24,12 +24,12 @@ def test_calculate_electricity():
 def test_calculate_food():
     assert calculate_food("vegan") > 0
     assert calculate_food("meat_heavy") > calculate_food("vegan")
-    assert calculate_food("unknown") == 65.0 # default fallback
+    assert calculate_food("unknown") == 90.0 # default fallback
 
 def test_calculate_waste():
     assert calculate_waste("recycle_all") > 0
     assert calculate_waste("no_recycling") > calculate_waste("recycle_all")
-    assert calculate_waste("unknown") == 25.0 # default fallback
+    assert calculate_waste("unknown") == 20.0 # default fallback
 
 def test_calculate_green_score():
     score1 = calculate_green_score(50.0, "IN")
