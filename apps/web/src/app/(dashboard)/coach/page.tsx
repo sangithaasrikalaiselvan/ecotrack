@@ -60,9 +60,12 @@ export default function CoachPage() {
 
       const data = await res.json()
       setMessages((prev) => [...prev, { role: 'assistant', content: data.response }])
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message)
+      } else {
+        toast.error('Something went wrong. Please try again.')
+      }
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: "I'm having trouble connecting to the server right now. Please try again later." }
@@ -147,7 +150,7 @@ export default function CoachPage() {
           <input
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
             className="w-full pl-4 pr-14 py-4 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 transition-shadow shadow-sm"

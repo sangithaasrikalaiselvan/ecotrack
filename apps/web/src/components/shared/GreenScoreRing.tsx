@@ -8,7 +8,7 @@ interface GreenScoreRingProps {
   size?: "sm" | "md" | "lg"
 }
 
-export function GreenScoreRing({ score, size = "md" }: GreenScoreRingProps) {
+export function GreenScoreRing({ score, size = "md" }: GreenScoreRingProps): React.ReactElement {
   const [animatedScore, setAnimatedScore] = useState(0)
   const prefersReducedMotion = useReducedMotion()
 

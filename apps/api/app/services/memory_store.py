@@ -3,6 +3,15 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
+__all__ = [
+    "save_record",
+    "get_record",
+    "get_all_records",
+    "save_chat_message",
+    "get_chat_history",
+    "clear_chat_history"
+]
+
 # In-memory storage
 _records: dict[str, dict] = {}          # record_id -> CarbonResult dict
 _recommendations: dict[str, list] = {}  # user_id -> list of recommendations

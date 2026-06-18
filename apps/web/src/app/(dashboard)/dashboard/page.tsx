@@ -1,9 +1,16 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 import { ThermometerSun, Leaf, Car, Zap, Utensils, Trash2, Globe, ArrowRight } from 'lucide-react'
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts'
+import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+import { toast } from 'sonner'
+
+const BreakdownDonut = dynamic(
+  () => import("@/components/charts/BreakdownDonut").then(mod => mod.BreakdownDonut),
+  { ssr: false, loading: () => <div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-full flex items-center justify-center">Loading chart...</div> }
+)
 
 interface BreakdownPct {
   transport: number
@@ -20,28 +27,48 @@ interface CarbonResult {
   breakdown_pct: BreakdownPct
 }
 
-const COLORS = ['#16a34a', '#4ade80', '#86efac', '#bbf7d0']
-
 export default function DashboardPage() {
-  const [record, setRecord] = useState<CarbonResult | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchSample = async () => {
+  const { data: record, isLoading: loading } = useQuery<CarbonResult>({
+    queryKey: ['carbonSample'],
+    queryFn: async () => {
       try {
         const res = await fetch('http://localhost:8000/api/v1/carbon/sample')
         if (!res.ok) throw new Error('Failed to fetch')
-        const data = await res.json()
-        setRecord(data)
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err)
-      } finally {
-        setLoading(false)
+        return await res.json()
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message)
+        } else {
+          toast.error('Something went wrong. Please try again.')
+        }
+        throw err
       }
     }
-    fetchSample()
-  }, [])
+  })
+
+  const sources = useMemo(() => {
+    if (!record) return []
+    return [
+      { name: 'Transport', pct: record.breakdown_pct.transport, icon: <Car className="w-5 h-5" /> },
+      { name: 'Electricity', pct: record.breakdown_pct.electricity, icon: <Zap className="w-5 h-5" /> },
+      { name: 'Food', pct: record.breakdown_pct.food, icon: <Utensils className="w-5 h-5" /> },
+      { name: 'Waste', pct: record.breakdown_pct.waste, icon: <Trash2 className="w-5 h-5" /> },
+    ]
+  }, [record])
+  const topSource = useMemo(() => {
+    if (!sources.length) return { name: '', pct: 0, icon: null }
+    return sources.reduce((prev, current) => (prev.pct > current.pct) ? prev : current)
+  }, [sources])
+
+  const chartData = useMemo(() => {
+    if (!record) return []
+    return [
+      { name: 'Transport', value: record.breakdown_pct.transport, rawKg: (record.total_kg * record.breakdown_pct.transport) / 100 },
+      { name: 'Electricity', value: record.breakdown_pct.electricity, rawKg: (record.total_kg * record.breakdown_pct.electricity) / 100 },
+      { name: 'Food', value: record.breakdown_pct.food, rawKg: (record.total_kg * record.breakdown_pct.food) / 100 },
+      { name: 'Waste', value: record.breakdown_pct.waste, rawKg: (record.total_kg * record.breakdown_pct.waste) / 100 },
+    ].filter(item => item.value > 0)
+  }, [record])
 
   if (loading || !record) {
     return (
@@ -53,21 +80,6 @@ export default function DashboardPage() {
       </div>
     )
   }
-
-  const sources = [
-    { name: 'Transport', pct: record.breakdown_pct.transport, icon: <Car className="w-5 h-5" /> },
-    { name: 'Electricity', pct: record.breakdown_pct.electricity, icon: <Zap className="w-5 h-5" /> },
-    { name: 'Food', pct: record.breakdown_pct.food, icon: <Utensils className="w-5 h-5" /> },
-    { name: 'Waste', pct: record.breakdown_pct.waste, icon: <Trash2 className="w-5 h-5" /> },
-  ]
-  const topSource = sources.reduce((prev, current) => (prev.pct > current.pct) ? prev : current)
-
-  const chartData = [
-    { name: 'Transport', value: record.breakdown_pct.transport, rawKg: (record.total_kg * record.breakdown_pct.transport) / 100 },
-    { name: 'Electricity', value: record.breakdown_pct.electricity, rawKg: (record.total_kg * record.breakdown_pct.electricity) / 100 },
-    { name: 'Food', value: record.breakdown_pct.food, rawKg: (record.total_kg * record.breakdown_pct.food) / 100 },
-    { name: 'Waste', value: record.breakdown_pct.waste, rawKg: (record.total_kg * record.breakdown_pct.waste) / 100 },
-  ].filter(item => item.value > 0)
 
   return (
     <div className="space-y-6 pb-8">
@@ -101,6 +113,9 @@ export default function DashboardPage() {
           <div className="text-2xl font-bold text-green-600">
             {record.green_score} <span className="text-sm font-normal text-muted-foreground">/ 100</span>
           </div>
+          <p className="text-xs text-muted-foreground mt-2 font-medium">
+            {record.green_score > 50 ? `+${record.green_score - 50} above average` : record.green_score < 50 ? `${record.green_score - 50} below average` : 'Exactly average'}
+          </p>
         </div>
 
         {/* Card 3 */}
@@ -131,50 +146,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 bg-card border border-border rounded-xl p-6 shadow-sm">
           <h3 className="text-lg font-semibold mb-6">Emission Breakdown</h3>
           <div className="h-[300px] w-full">
-            <div role="img" aria-label="Carbon footprint breakdown: showing transport, electricity, food and waste emissions" style={{ width: '100%', height: '100%' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                    <Label
-                      content={({ viewBox }) => {
-                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                          return (
-                            <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                              <tspan x={viewBox.cx} y={(viewBox.cy || 0) - 5} className="fill-foreground text-xl font-bold">
-                                {record.total_kg}
-                              </tspan>
-                              <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 15} className="fill-muted-foreground text-xs">
-                                kg CO₂
-                              </tspan>
-                            </text>
-                          )
-                        }
-                        return null
-                      }}
-                    />
-                  </Pie>
-                  <Tooltip
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    formatter={(value: any, name: any, props: any) => [
-                      `${Number(value).toFixed(1)}% (${props.payload.rawKg.toFixed(1)} kg)`,
-                      name
-                    ]}
-                  />
-                  <Legend verticalAlign="bottom" height={36} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            <BreakdownDonut data={record.breakdown_pct} totalKg={record.total_kg} />
             <table className="sr-only">
               <caption>Carbon footprint breakdown data</caption>
               <thead>

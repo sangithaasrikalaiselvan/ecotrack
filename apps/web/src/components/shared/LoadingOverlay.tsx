@@ -6,7 +6,7 @@ interface LoadingOverlayProps {
   message?: string
 }
 
-export function LoadingOverlay({ message = "Loading..." }: LoadingOverlayProps) {
+export function LoadingOverlay({ message = "Loading..." }: LoadingOverlayProps): React.ReactElement | null {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity">
       <div className="flex flex-col items-center bg-card p-6 rounded-2xl shadow-lg border border-border">

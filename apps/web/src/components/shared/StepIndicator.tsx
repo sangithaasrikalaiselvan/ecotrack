@@ -7,7 +7,7 @@ interface StepIndicatorProps {
   currentStep: number
 }
 
-export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
+export function StepIndicator({ steps, currentStep }: StepIndicatorProps): React.ReactElement {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2" role="list">

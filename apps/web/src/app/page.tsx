@@ -1,9 +1,7 @@
 "use client"
 
-/* eslint-disable react-hooks/purity */
 import Link from "next/link"
 import React from 'react'
-import { Button } from "@/components/ui/button"
 import { Calculator, Bot, Trophy, Leaf } from "lucide-react"
 
 export default function LandingPage() {
@@ -105,6 +103,16 @@ export default function LandingPage() {
               <span className="text-4xl font-black text-foreground">95%</span>
               <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Found It Helpful</span>
             </div>
+          </div>
+        </section>
+
+        {/* WHY THIS MATTERS SECTION */}
+        <section className="max-w-4xl mx-auto py-16 px-4 text-center">
+          <div className="bg-green-50 dark:bg-green-950/20 rounded-3xl p-8 border border-green-200 dark:border-green-900 shadow-sm">
+            <h2 className="text-2xl font-bold mb-4 text-foreground">Why calculate your footprint?</h2>
+            <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+              You can&apos;t manage what you don&apos;t measure. By understanding your specific carbon sources, you can make targeted changes—whether switching to renewable energy, driving less, or adjusting your diet—that significantly reduce your personal contribution to climate change. Every ton of carbon saved is a step toward a sustainable future.
+            </p>
           </div>
         </section>
 

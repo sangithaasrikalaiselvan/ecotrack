@@ -8,11 +8,17 @@ import { useCarbonStore } from "@/stores/carbon-store"
 import { calculateFootprint, saveRecord } from "@/lib/api/carbon"
 
 import Link from "next/link"
+import { toast } from 'sonner'
 
 import { StepIndicator } from "@/components/shared/StepIndicator"
 import { LoadingOverlay } from "@/components/shared/LoadingOverlay"
 import { VehicleCard } from "@/components/calculator/VehicleCard"
-import { BreakdownDonut } from "@/components/charts/BreakdownDonut"
+import dynamic from 'next/dynamic'
+
+const BreakdownDonut = dynamic(
+  () => import("@/components/charts/BreakdownDonut").then(mod => mod.BreakdownDonut),
+  { ssr: false, loading: () => <div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-full flex items-center justify-center">Loading chart...</div> }
+)
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -73,6 +79,7 @@ export default function CalculatorPage() {
     }
   })
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const watchKwh = watch("monthly_kwh")
   const [kwhEstimate, setKwhEstimate] = useState(0)
 
@@ -124,9 +131,12 @@ export default function CalculatorPage() {
 
       // Auto-save in background
       await saveRecord(result)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Calculation failed", error)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('Something went wrong. Please try again.')
+      }
     } finally {
       setCalculating(false)
     }

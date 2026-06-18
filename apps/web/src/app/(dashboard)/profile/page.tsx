@@ -1,9 +1,11 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useAuthStore } from '@/stores/auth-store'
 import { useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 import { LogOut, Mail, Globe, Calendar, Award } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Stats {
   total_kg: number
@@ -20,25 +22,25 @@ const BADGES = [
 export default function ProfilePage() {
   const { user, logout } = useAuthStore()
   const router = useRouter()
-  const [stats, setStats] = useState<Stats | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchSample = async () => {
+  const { data: stats, isLoading: loading } = useQuery<Stats>({
+    queryKey: ['carbonSampleStats'],
+    queryFn: async () => {
       try {
         const res = await fetch('http://localhost:8000/api/v1/carbon/sample')
         if (!res.ok) throw new Error('Failed to fetch stats')
         const data = await res.json()
-        setStats({ total_kg: data.total_kg, green_score: data.green_score })
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err)
-      } finally {
-        setLoading(false)
+        return { total_kg: data.total_kg, green_score: data.green_score }
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message)
+        } else {
+          toast.error('Something went wrong. Please try again.')
+        }
+        throw err
       }
     }
-    fetchSample()
-  }, [])
+  })
 
   const handleLogout = () => {
     logout()

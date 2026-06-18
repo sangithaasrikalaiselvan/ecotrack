@@ -1,7 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Car, Zap, Utensils, Trash2, Loader2, BarChart3, TrendingDown } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { useDebounce } from '@/hooks/use-debounce'
 
 interface CarbonResult {
   total_kg: number
@@ -32,10 +35,26 @@ const icons = {
 }
 
 export default function InsightsPage() {
-  const [baseResult, setBaseResult] = useState<CarbonResult | null>(null)
+  const { data: baseResult, isLoading: loading } = useQuery<CarbonResult>({
+    queryKey: ['carbonSample'],
+    queryFn: async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/v1/carbon/sample')
+        if (!res.ok) throw new Error('Failed to fetch data')
+        return await res.json()
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error(err.message)
+        } else {
+          toast.error('Something went wrong. Please try again.')
+        }
+        throw err
+      }
+    }
+  })
+
   const [simulateResult, setSimulateResult] = useState<SimulateResult | null>(null)
   const [isSimulating, setIsSimulating] = useState(false)
-  const [loading, setLoading] = useState(true)
 
   const [sliders, setSliders] = useState({
     transport: 0,
@@ -44,24 +63,9 @@ export default function InsightsPage() {
     waste: 'recycle_sometimes'
   })
 
-  useEffect(() => {
-    const fetchSample = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/api/v1/carbon/sample')
-        if (!res.ok) throw new Error('Failed to fetch data')
-        const data = await res.json()
-        setBaseResult(data)
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchSample()
-  }, [])
+  const debouncedSliders = useDebounce(sliders, 500)
 
-  const handleSimulate = async () => {
+  const handleSimulate = useCallback(async () => {
     if (!baseResult) return
     setIsSimulating(true)
     try {
@@ -70,39 +74,51 @@ export default function InsightsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           base_result: baseResult,
-          reduce_transport_pct: sliders.transport,
-          reduce_electricity_pct: sliders.electricity,
-          switch_diet_to: sliders.diet,
-          switch_waste_to: sliders.waste
+          reduce_transport_pct: debouncedSliders.transport,
+          reduce_electricity_pct: debouncedSliders.electricity,
+          switch_diet_to: debouncedSliders.diet,
+          switch_waste_to: debouncedSliders.waste
         })
       })
       if (!res.ok) throw new Error('Failed to simulate')
       const data = await res.json()
       setSimulateResult(data)
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message)
+      } else {
+        toast.error('Something went wrong. Please try again.')
+      }
     } finally {
       setIsSimulating(false)
     }
-  }
+  }, [baseResult, debouncedSliders])
+
+  useEffect(() => {
+    if (baseResult) {
+      setTimeout(() => handleSimulate(), 0)
+    }
+  }, [debouncedSliders, baseResult, handleSimulate])
+
+  const breakdownArray = useMemo(() => {
+    if (!baseResult) return []
+    return [
+      { id: 'transport', name: 'Transport', pct: baseResult.breakdown_pct.transport, kg: (baseResult.total_kg * baseResult.breakdown_pct.transport) / 100 },
+      { id: 'electricity', name: 'Electricity', pct: baseResult.breakdown_pct.electricity, kg: (baseResult.total_kg * baseResult.breakdown_pct.electricity) / 100 },
+      { id: 'food', name: 'Food', pct: baseResult.breakdown_pct.food, kg: (baseResult.total_kg * baseResult.breakdown_pct.food) / 100 },
+      { id: 'waste', name: 'Waste', pct: baseResult.breakdown_pct.waste, kg: (baseResult.total_kg * baseResult.breakdown_pct.waste) / 100 },
+    ].sort((a, b) => b.pct - a.pct)
+  }, [baseResult])
 
   if (loading || !baseResult) {
     return (
-      <div className="space-y-8 animate-pulse max-w-4xl mx-auto">
-        <div className="h-10 bg-muted rounded w-64 mb-6"></div>
-        <div className="h-64 bg-card rounded-2xl border border-border"></div>
-        <div className="h-96 bg-card rounded-2xl border border-border mt-8"></div>
+      <div className="space-y-6 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold tracking-tight">Insights & Simulation</h1>
+        <div className="h-64 bg-muted animate-pulse rounded-xl" />
+        <div className="h-32 bg-muted animate-pulse rounded-xl" />
       </div>
     )
   }
-
-  const breakdownArray = [
-    { id: 'transport', name: 'Transport', pct: baseResult.breakdown_pct.transport, kg: (baseResult.total_kg * baseResult.breakdown_pct.transport) / 100 },
-    { id: 'electricity', name: 'Electricity', pct: baseResult.breakdown_pct.electricity, kg: (baseResult.total_kg * baseResult.breakdown_pct.electricity) / 100 },
-    { id: 'food', name: 'Food', pct: baseResult.breakdown_pct.food, kg: (baseResult.total_kg * baseResult.breakdown_pct.food) / 100 },
-    { id: 'waste', name: 'Waste', pct: baseResult.breakdown_pct.waste, kg: (baseResult.total_kg * baseResult.breakdown_pct.waste) / 100 },
-  ].sort((a, b) => b.pct - a.pct)
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 pb-12">
@@ -160,7 +176,7 @@ export default function InsightsPage() {
             <input
               type="range" min="0" max="100"
               value={sliders.transport}
-              onChange={(e) => setSliders({ ...sliders, transport: parseInt(e.target.value) })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSliders({ ...sliders, transport: parseInt(e.target.value) })}
               className="w-full accent-green-600 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
           </div>
@@ -173,7 +189,7 @@ export default function InsightsPage() {
             <input
               type="range" min="0" max="100"
               value={sliders.electricity}
-              onChange={(e) => setSliders({ ...sliders, electricity: parseInt(e.target.value) })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSliders({ ...sliders, electricity: parseInt(e.target.value) })}
               className="w-full accent-green-600 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
           </div>
@@ -182,7 +198,7 @@ export default function InsightsPage() {
             <label className="text-sm font-medium block">Change diet</label>
             <select
               value={sliders.diet}
-              onChange={(e) => setSliders({ ...sliders, diet: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSliders({ ...sliders, diet: e.target.value })}
               className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="high_meat">High Meat</option>
@@ -197,7 +213,7 @@ export default function InsightsPage() {
             <label className="text-sm font-medium block">Waste habits</label>
             <select
               value={sliders.waste}
-              onChange={(e) => setSliders({ ...sliders, waste: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSliders({ ...sliders, waste: e.target.value })}
               className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value="no_recycling">No Recycling</option>
@@ -209,14 +225,13 @@ export default function InsightsPage() {
         </div>
 
         <div className="mt-8 ml-0 md:ml-14">
-          <button
-            onClick={handleSimulate}
-            disabled={isSimulating}
-            className="w-full h-12 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium flex items-center justify-center transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {isSimulating ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-            Calculate Savings
-          </button>
+          <div className="w-full h-12 bg-green-600/10 text-green-700 dark:text-green-400 rounded-xl font-medium flex items-center justify-center">
+            {isSimulating ? (
+              <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Calculating Savings...</>
+            ) : (
+              "Move sliders to update savings"
+            )}
+          </div>
         </div>
       </section>
 

@@ -1,14 +1,38 @@
+"""
+Carbon Calculation Engine — EcoTrack AI
+
+Emission factors sourced from:
+- Transport: DEFRA UK GHG Conversion Factors 2024
+- Electricity: India CEA CO2 Baseline Database 2023
+- Food: Our World in Data — Food Carbon Footprint Index
+- Waste: EPA — Greenhouse Gas Equivalencies Calculator
+
+All values in kg CO2 equivalent per unit.
+"""
+
+__all__ = [
+    "calculate_transport",
+    "calculate_electricity",
+    "calculate_food",
+    "calculate_waste",
+    "calculate_green_score",
+    "get_carbon_equivalent",
+    "calculate_full_footprint"
+]
+
 # app/services/carbon_engine.py
 
+# Transport emission factors (kg CO2 per km)
+# Source: DEFRA 2024 GHG Conversion Factors
 TRANSPORT_FACTORS = {
-    "petrol_car": 0.192,
-    "diesel_car": 0.171,
-    "electric_car": 0.053,
-    "motorcycle": 0.114,
-    "bus": 0.089,
-    "train": 0.041,
-    "cycle": 0.0,
-    "walking": 0.0,
+    "petrol_car": 0.192,   # Average petrol passenger car
+    "diesel_car": 0.171,   # Average diesel passenger car
+    "electric_car": 0.053, # UK grid average (conservative)
+    "motorcycle": 0.114,   # Average motorcycle
+    "bus": 0.089,          # Local bus average
+    "train": 0.041,        # National rail average
+    "cycle": 0.0,          # Zero direct emissions
+    "walking": 0.0,        # Zero direct emissions
 }
 
 FOOD_FACTORS = {

@@ -13,7 +13,7 @@ interface CarbonCardProps {
   colorClass?: string
 }
 
-export function CarbonCard({ title, value, unit, icon, subtext, trend, colorClass = "text-foreground" }: CarbonCardProps) {
+export function CarbonCard({ title, value, unit, icon, subtext, trend, colorClass = "text-foreground" }: CarbonCardProps): React.ReactElement {
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

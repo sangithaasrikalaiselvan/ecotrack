@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from 'react'
 import { useReducedMotion } from "framer-motion"
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, Label } from "recharts"
 
@@ -15,15 +16,15 @@ interface BreakdownDonutProps {
 
 const COLORS = ["#16a34a", "#4ade80", "#86efac", "#bbf7d0"]
 
-export function BreakdownDonut({ data, totalKg }: BreakdownDonutProps) {
+export function BreakdownDonut({ data, totalKg }: BreakdownDonutProps): React.ReactElement {
   const prefersReducedMotion = useReducedMotion()
 
-  const chartData = [
+  const chartData = useMemo(() => [
     { name: "Transport", value: data.transport, rawKg: (totalKg * data.transport) / 100 },
     { name: "Electricity", value: data.electricity, rawKg: (totalKg * data.electricity) / 100 },
     { name: "Food", value: data.food, rawKg: (totalKg * data.food) / 100 },
     { name: "Waste", value: data.waste, rawKg: (totalKg * data.waste) / 100 },
-  ].filter(item => item.value > 0) // only show categories with data
+  ].filter(item => item.value > 0), [data, totalKg]) // only show categories with data
 
   return (
     <div className="h-[300px] w-full" aria-label="Carbon Footprint Breakdown Chart">

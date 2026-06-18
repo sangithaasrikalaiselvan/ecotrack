@@ -11,7 +11,7 @@ interface VehicleCardProps {
   onSelect: () => void
 }
 
-export function VehicleCard({ label, icon, selected, onSelect }: VehicleCardProps) {
+export function VehicleCard({ label, icon, selected, onSelect }: VehicleCardProps): React.ReactElement {
   return (
     <Card 
       onClick={onSelect}
