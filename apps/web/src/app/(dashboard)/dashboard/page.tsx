@@ -48,7 +48,7 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-muted animate-pulse rounded-xl" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-muted animate-pulse rounded-xl" />)}
         </div>
       </div>
     )
@@ -163,10 +163,10 @@ export default function DashboardPage() {
                     }}
                   />
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   formatter={(value: any, name: any, props: any) => [
-                    `${Number(value).toFixed(1)}% (${props.payload.rawKg.toFixed(1)} kg)`, 
+                    `${Number(value).toFixed(1)}% (${props.payload.rawKg.toFixed(1)} kg)`,
                     name
                   ]}
                 />

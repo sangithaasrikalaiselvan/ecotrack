@@ -106,7 +106,7 @@ export default function InsightsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 pb-12">
-      
+
       {/* SECTION A: Carbon Sources Ranking */}
       <section className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm">
         <div className="flex items-center mb-6">
@@ -115,7 +115,7 @@ export default function InsightsPage() {
           </div>
           <h2 className="text-2xl font-bold text-foreground">Your Emission Sources</h2>
         </div>
-        
+
         <div className="space-y-6">
           {breakdownArray.map((item) => (
             <div key={item.id} className="w-full">
@@ -130,9 +130,9 @@ export default function InsightsPage() {
                 </div>
               </div>
               <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-out" 
-                  style={{ width: `${item.pct}%` }} 
+                <div
+                  className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${item.pct}%` }}
                 />
               </div>
             </div>
@@ -151,15 +151,15 @@ export default function InsightsPage() {
         <p className="text-muted-foreground mb-8 ml-14">Adjust sliders to see your potential savings</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ml-0 md:ml-14">
-          
+
           <div className="space-y-3">
             <label className="text-sm font-medium flex justify-between">
               <span>Drive less</span>
               <span className="text-green-600 font-bold">Reduce by {sliders.transport}%</span>
             </label>
-            <input 
-              type="range" min="0" max="100" 
-              value={sliders.transport} 
+            <input
+              type="range" min="0" max="100"
+              value={sliders.transport}
               onChange={(e) => setSliders({ ...sliders, transport: parseInt(e.target.value) })}
               className="w-full accent-green-600 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
@@ -170,9 +170,9 @@ export default function InsightsPage() {
               <span>Use less electricity</span>
               <span className="text-green-600 font-bold">Reduce by {sliders.electricity}%</span>
             </label>
-            <input 
-              type="range" min="0" max="100" 
-              value={sliders.electricity} 
+            <input
+              type="range" min="0" max="100"
+              value={sliders.electricity}
               onChange={(e) => setSliders({ ...sliders, electricity: parseInt(e.target.value) })}
               className="w-full accent-green-600 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
             />
@@ -180,7 +180,7 @@ export default function InsightsPage() {
 
           <div className="space-y-3">
             <label className="text-sm font-medium block">Change diet</label>
-            <select 
+            <select
               value={sliders.diet}
               onChange={(e) => setSliders({ ...sliders, diet: e.target.value })}
               className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -195,7 +195,7 @@ export default function InsightsPage() {
 
           <div className="space-y-3">
             <label className="text-sm font-medium block">Waste habits</label>
-            <select 
+            <select
               value={sliders.waste}
               onChange={(e) => setSliders({ ...sliders, waste: e.target.value })}
               className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -209,7 +209,7 @@ export default function InsightsPage() {
         </div>
 
         <div className="mt-8 ml-0 md:ml-14">
-          <button 
+          <button
             onClick={handleSimulate}
             disabled={isSimulating}
             className="w-full h-12 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium flex items-center justify-center transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
@@ -224,18 +224,18 @@ export default function InsightsPage() {
       {simulateResult && (
         <section className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-2xl p-6 md:p-8 animate-in slide-in-from-bottom-4 fade-in duration-500 shadow-sm">
           <h3 className="text-xl font-bold mb-6 text-center text-foreground">Your Potential Impact</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-white dark:bg-card border border-border rounded-xl p-4 text-center shadow-sm">
               <div className="text-sm text-muted-foreground mb-1">Current</div>
               <div className="text-2xl font-bold">{simulateResult.original_kg.toFixed(1)} kg</div>
             </div>
-            
+
             <div className="bg-green-100/50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center shadow-sm">
               <div className="text-sm text-green-700 dark:text-green-400 mb-1">Projected</div>
               <div className="text-2xl font-bold text-green-700 dark:text-green-400">{simulateResult.projected_kg.toFixed(1)} kg</div>
             </div>
-            
+
             <div className="bg-green-600 border border-green-600 rounded-xl p-4 text-center shadow-md text-white transform scale-105">
               <div className="text-sm text-green-100 mb-1">You Save</div>
               <div className="text-3xl font-black">{simulateResult.reduction_kg.toFixed(1)} kg</div>
@@ -244,7 +244,7 @@ export default function InsightsPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="text-center p-4 bg-white dark:bg-card rounded-xl border border-border">
             <span className="font-medium">Your new Green Score would be </span>
             <span className="text-2xl font-bold text-green-600 ml-2">{simulateResult.new_green_score}/100</span>

@@ -64,15 +64,15 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      
+
       {/* SECTION A — Profile Card */}
       <section className="bg-card border border-border rounded-3xl p-8 shadow-sm flex flex-col md:flex-row items-center text-center md:text-left space-y-6 md:space-y-0 md:space-x-8 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-green-500/20 to-green-600/5 dark:from-green-900/30 dark:to-background z-0"></div>
-        
+
         <div className="w-32 h-32 bg-green-600 text-white rounded-full flex items-center justify-center text-5xl font-bold shadow-lg border-4 border-background z-10">
           {initial}
         </div>
-        
+
         <div className="flex-1 z-10">
           <h1 className="text-3xl font-bold text-foreground mb-2">{user.name}</h1>
           <div className="flex flex-col md:flex-row gap-3 text-muted-foreground text-sm font-medium">
@@ -118,16 +118,15 @@ export default function ProfilePage() {
           <Award className="w-6 h-6 text-amber-500" />
           <h2 className="text-2xl font-bold text-foreground">Your Badges</h2>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {BADGES.map((badge) => (
-            <div 
-              key={badge.slug} 
-              className={`flex flex-col items-center p-6 rounded-2xl border transition-all ${
-                badge.earned 
-                  ? 'border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-900/20 shadow-md transform hover:scale-105' 
+            <div
+              key={badge.slug}
+              className={`flex flex-col items-center p-6 rounded-2xl border transition-all ${badge.earned
+                  ? 'border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-900/20 shadow-md transform hover:scale-105'
                   : 'border-border bg-muted/50 grayscale opacity-50'
-              }`}
+                }`}
             >
               <div className="text-5xl mb-4">{badge.icon}</div>
               <div className="font-bold text-center mb-1 text-foreground">{badge.label}</div>
@@ -141,7 +140,7 @@ export default function ProfilePage() {
 
       {/* SECTION D — Danger Zone */}
       <section className="pt-8 flex justify-center md:justify-end">
-        <button 
+        <button
           onClick={handleLogout}
           className="inline-flex items-center justify-center px-6 py-3 border-2 border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-bold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         >

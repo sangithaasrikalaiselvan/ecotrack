@@ -36,7 +36,7 @@ test('logout redirects to landing page', async ({ page }) => {
   await page.fill('[name="password"]', 'anypassword')
   await page.click('button[type="submit"]')
   await expect(page).toHaveURL('/dashboard')
-  
+
   // Then logout
   await page.goto('/profile')
   await page.click('button:has-text("Log Out")')

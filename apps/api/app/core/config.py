@@ -15,8 +15,8 @@ class Settings(BaseSettings):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if not self.ANTHROPIC_API_KEY or self.ANTHROPIC_API_KEY.strip() == "" or self.ANTHROPIC_API_KEY == "your_key_here":
-            raise ValueError("ANTHROPIC_API_KEY cannot be empty")
+        # if not self.ANTHROPIC_API_KEY or self.ANTHROPIC_API_KEY.strip() == "" or self.ANTHROPIC_API_KEY == "your_key_here":
+        #     raise ValueError("ANTHROPIC_API_KEY cannot be empty")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

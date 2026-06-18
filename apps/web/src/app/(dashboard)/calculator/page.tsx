@@ -58,7 +58,7 @@ export default function CalculatorPage() {
   const { currentRecord, setCurrentRecord, isCalculating, setCalculating } = useCarbonStore()
   const [currentStep, setCurrentStep] = useState(0)
   const [animatedScore, setAnimatedScore] = useState(0)
-  
+
   const { register, control, handleSubmit, watch, formState: { errors }, trigger } = useForm<CalculatorForm>({
     resolver: zodResolver(calculatorSchema),
     mode: "onChange",
@@ -80,7 +80,7 @@ export default function CalculatorPage() {
   useEffect(() => {
     const handler = setTimeout(() => {
       // rough estimation for display
-      setKwhEstimate(watchKwh * 0.82) 
+      setKwhEstimate(watchKwh * 0.82)
     }, 500)
     return () => clearTimeout(handler)
   }, [watchKwh])
@@ -106,7 +106,7 @@ export default function CalculatorPage() {
     let fieldsToValidate: (keyof CalculatorForm)[] = []
     if (currentStep === 0) fieldsToValidate = ["vehicle_type", "km_per_day", "days_per_week"]
     if (currentStep === 1) fieldsToValidate = ["monthly_kwh", "country_code"]
-    
+
     const isStepValid = await trigger(fieldsToValidate)
     if (isStepValid) {
       setCurrentStep(prev => prev + 1)
@@ -121,7 +121,7 @@ export default function CalculatorPage() {
       const result = await calculateFootprint(data)
       setCurrentRecord(result)
       setCurrentStep(3) // move to results
-      
+
       // Auto-save in background
       await saveRecord(result)
     } catch (error) {
@@ -135,17 +135,17 @@ export default function CalculatorPage() {
   return (
     <div className="max-w-3xl mx-auto py-6">
       <StepIndicator steps={steps} currentStep={currentStep} />
-      
+
       {isCalculating && <LoadingOverlay message="Calculating your footprint..." />}
 
       <div className="mt-8 bg-card rounded-2xl shadow-sm border border-border p-6 sm:p-8">
         {currentStep < 3 ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            
+
             {/* STEP 1: TRANSPORT */}
             <div className={currentStep === 0 ? "block" : "hidden"}>
               <h2 className="text-2xl font-bold mb-6">How do you get around?</h2>
-              
+
               <div className="space-y-8">
                 <div>
                   <Label className="text-base mb-4 block">Primary Vehicle Type</Label>
@@ -178,10 +178,10 @@ export default function CalculatorPage() {
                     name="km_per_day"
                     control={control}
                     render={({ field }) => (
-                      <Slider 
-                        min={0} max={200} step={1} 
-                        value={[field.value]} 
-                        onValueChange={(vals) => field.onChange(Array.isArray(vals) ? vals[0] : vals)} 
+                      <Slider
+                        min={0} max={200} step={1}
+                        value={[field.value]}
+                        onValueChange={(vals) => field.onChange(Array.isArray(vals) ? vals[0] : vals)}
                       />
                     )}
                   />
@@ -194,7 +194,7 @@ export default function CalculatorPage() {
                     control={control}
                     render={({ field }) => (
                       <div className="flex space-x-2">
-                        {[1,2,3,4,5,6,7].map(d => (
+                        {[1, 2, 3, 4, 5, 6, 7].map(d => (
                           <Button
                             key={d} type="button"
                             variant={field.value === d ? "default" : "outline"}
@@ -214,7 +214,7 @@ export default function CalculatorPage() {
             {/* STEP 2: ELECTRICITY */}
             <div className={currentStep === 1 ? "block" : "hidden"}>
               <h2 className="text-2xl font-bold mb-6">Home Energy Use</h2>
-              
+
               <div className="space-y-8">
                 <div className="space-y-2">
                   <Label className="text-base">Monthly Electricity (kWh)</Label>
@@ -222,7 +222,7 @@ export default function CalculatorPage() {
                   <p className="text-sm text-muted-foreground">Check your electricity bill for this number</p>
                   {errors.monthly_kwh && <p className="text-red-500 text-sm">{errors.monthly_kwh.message}</p>}
                 </div>
-                
+
                 <div className="p-4 bg-eco-surface dark:bg-green-950/30 rounded-xl flex items-center justify-between border border-green-100 dark:border-green-900">
                   <div className="text-eco-primary font-medium">Estimated Emissions</div>
                   <div className="text-xl font-bold text-eco-primary">≈ {kwhEstimate.toFixed(1)} kg CO₂</div>
@@ -243,7 +243,7 @@ export default function CalculatorPage() {
             {/* STEP 3: FOOD & WASTE */}
             <div className={currentStep === 2 ? "block" : "hidden"}>
               <h2 className="text-2xl font-bold mb-6">Diet & Waste</h2>
-              
+
               <div className="space-y-8">
                 <div>
                   <Label className="text-base mb-4 block">Diet Type</Label>
@@ -253,7 +253,7 @@ export default function CalculatorPage() {
                     render={({ field }) => (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {dietOptions.map(opt => (
-                          <Card 
+                          <Card
                             key={opt.id} onClick={() => field.onChange(opt.id)}
                             className={`cursor-pointer transition-all ${field.value === opt.id ? 'border-eco-primary ring-1 ring-eco-primary bg-eco-surface dark:bg-green-900/20' : 'hover:border-green-300'}`}
                           >
@@ -304,7 +304,7 @@ export default function CalculatorPage() {
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
               ) : <div></div>}
-              
+
               {currentStep < 2 ? (
                 <Button type="button" className="bg-eco-primary hover:bg-eco-secondary" onClick={nextStep}>
                   Next <ArrowRight className="w-4 h-4 ml-2" />
@@ -322,16 +322,16 @@ export default function CalculatorPage() {
             {currentRecord && (
               <div className="text-center space-y-8">
                 <h2 className="text-3xl font-bold">Your Results are Ready!</h2>
-                
+
                 <div className="flex justify-center">
                   <div className="relative">
                     <svg className="w-48 h-48 transform -rotate-90">
                       <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="none" className="text-gray-100 dark:text-gray-800" />
-                      <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="none" 
-                        strokeDasharray={2 * Math.PI * 88} 
-                        strokeDashoffset={2 * Math.PI * 88 * (1 - animatedScore / 100)} 
+                      <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="none"
+                        strokeDasharray={2 * Math.PI * 88}
+                        strokeDashoffset={2 * Math.PI * 88 * (1 - animatedScore / 100)}
                         strokeLinecap="round"
-                        className="text-eco-primary transition-all duration-300" 
+                        className="text-eco-primary transition-all duration-300"
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -348,7 +348,7 @@ export default function CalculatorPage() {
                 </div>
 
                 <div className="max-w-xs mx-auto">
-                   <BreakdownDonut data={currentRecord.breakdown_pct} totalKg={currentRecord.total_kg} />
+                  <BreakdownDonut data={currentRecord.breakdown_pct} totalKg={currentRecord.total_kg} />
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">

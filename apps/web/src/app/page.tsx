@@ -34,18 +34,24 @@ export default function LandingPage() {
       {/* Floating Leaves Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-eco-surface/50 to-background dark:from-green-950/20 dark:to-background z-0" />
-        {[...Array(12)].map((_, i) => (
-          <Leaf 
-            key={i} 
-            className="leaf-particle" 
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${15 + Math.random() * 15}s`,
-              animationDelay: `${Math.random() * 5}s`,
-              opacity: 0.1 + Math.random() * 0.2
-            }} 
-          />
-        ))}
+        {[...Array(12)].map((_, i) => {
+          const left = (i * 13.5) % 100;
+          const duration = 15 + ((i * 7) % 15);
+          const delay = (i * 3) % 5;
+          const opacity = 0.1 + ((i * 11) % 20) / 100;
+          return (
+            <Leaf 
+              key={i} 
+              className="leaf-particle" 
+              style={{
+                left: `${left}%`,
+                animationDuration: `${duration}s`,
+                animationDelay: `${delay}s`,
+                opacity: opacity
+              }} 
+            />
+          );
+        })}
       </div>
 
       <header className="absolute top-0 w-full p-6 flex justify-between items-center z-20">
@@ -55,10 +61,8 @@ export default function LandingPage() {
         </div>
         <div className="space-x-4">
           <Link href="/login" className="text-sm font-medium hover:text-eco-primary transition-colors">Sign In</Link>
-          <Link href="/register">
-            <Button className="bg-eco-primary hover:bg-eco-secondary text-white rounded-full px-6">
-              Get Started
-            </Button>
+          <Link href="/register" className="inline-flex items-center justify-center rounded-full font-medium transition-colors bg-green-600 text-white hover:bg-green-700 shadow h-9 px-6 text-sm">
+            Get Started
           </Link>
         </div>
       </header>
@@ -77,15 +81,11 @@ export default function LandingPage() {
             Reduce Emissions. Save The Planet. Get personalized AI recommendations to reduce your impact in minutes.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-            <Link href="/register" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full text-lg h-14 px-8 rounded-full bg-eco-primary hover:bg-eco-secondary text-white shadow-lg hover:shadow-xl transition-all">
-                Start Tracking Free
-              </Button>
+            <Link href="/register" className="w-full sm:w-auto inline-flex items-center justify-center font-medium transition-all bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl h-14 px-8 rounded-full text-lg">
+              Start Tracking Free
             </Link>
-            <Link href="/login" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full text-lg h-14 px-8 rounded-full">
-                Already have an account?
-              </Button>
+            <Link href="/login" className="w-full sm:w-auto inline-flex items-center justify-center font-medium transition-colors border border-green-600 text-green-600 hover:bg-green-50 h-14 px-8 rounded-full text-lg">
+              Already have an account?
             </Link>
           </div>
         </section>

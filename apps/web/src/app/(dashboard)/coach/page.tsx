@@ -17,7 +17,7 @@ export default function CoachPage() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId] = useState(() => crypto.randomUUID())
-  
+
   const currentRecord = useCarbonStore((state) => state.currentRecord)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -35,7 +35,7 @@ export default function CoachPage() {
 
     const userMsg = input.trim()
     const safeMsg = sanitizeInput(userMsg)
-    
+
     if (!canSendMessage()) {
       toast.error('Rate limit exceeded. Please wait a minute.')
       return
@@ -57,14 +57,14 @@ export default function CoachPage() {
       })
 
       if (!res.ok) throw new Error('Failed to get response')
-      
+
       const data = await res.json()
       setMessages((prev) => [...prev, { role: 'assistant', content: data.response }])
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
       setMessages((prev) => [
-        ...prev, 
+        ...prev,
         { role: 'assistant', content: "I'm having trouble connecting to the server right now. Please try again later." }
       ])
     } finally {
@@ -74,7 +74,7 @@ export default function CoachPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-100px)] max-w-4xl mx-auto w-full bg-card border border-border rounded-2xl shadow-sm overflow-hidden relative">
-      
+
       {/* Header */}
       <div className="flex items-center px-6 py-4 border-b border-border bg-green-50/50 dark:bg-green-950/20">
         <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-600 mr-4">
@@ -103,22 +103,20 @@ export default function CoachPage() {
           </div>
         ) : (
           messages.map((msg, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex max-w-[85%] sm:max-w-[75%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                  msg.role === 'user' ? 'bg-primary text-primary-foreground ml-3' : 'bg-green-100 dark:bg-green-900/50 text-green-600 mr-3'
-                }`}>
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-primary text-primary-foreground ml-3' : 'bg-green-100 dark:bg-green-900/50 text-green-600 mr-3'
+                  }`}>
                   {msg.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
                 </div>
-                
-                <div className={`px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm sm:text-base shadow-sm ${
-                  msg.role === 'user' 
-                    ? 'bg-green-600 text-white rounded-tr-none' 
+
+                <div className={`px-4 py-3 rounded-2xl whitespace-pre-wrap text-sm sm:text-base shadow-sm ${msg.role === 'user'
+                    ? 'bg-green-600 text-white rounded-tr-none'
                     : 'bg-muted text-foreground border border-border rounded-tl-none'
-                }`}>
+                  }`}>
                   {msg.content}
                 </div>
               </div>
@@ -163,7 +161,7 @@ export default function CoachPage() {
           </button>
         </form>
       </div>
-      
+
     </div>
   )
 }
